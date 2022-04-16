@@ -1,0 +1,98 @@
+declare @anointerior table (
+ANO INT,
+JANEIRO INT,
+FEVEREIRO INT,
+MARÇO INT,
+ABRIL INT,
+MAIO INT, 
+JUNHO INT,
+JULHO INT,
+AGOSTO INT,
+SETEMBRO INT,
+OUTUBRO INT,
+NOVEMBRO INT, 
+DEZEMBRO INT
+)
+
+declare @anoatual table(
+ANO INT,
+JANEIRO INT,
+FEVEREIRO INT,
+MARÇO INT,
+ABRIL INT,
+MAIO INT, 
+JUNHO INT,
+JULHO INT,
+AGOSTO INT,
+SETEMBRO INT,
+OUTUBRO INT,
+NOVEMBRO INT, 
+DEZEMBRO INT
+)
+
+
+insert into @anointerior
+
+SELECT
+ANO,
+[1] JANEIRO,
+[2] FEVEREIRO,
+[3] MARÇO,
+[4] ABRIL,
+[5] MAIO,
+[6] JUNHO,
+[7] JULHO,
+[8] AGOSTO,
+[9] SETEMBRO,
+[10] OUTUBRO,
+[11] NOVEMBRO,
+[12] DEZEMBRO
+
+FROM
+
+(SELECT  MONTH (DATAPEDIDO) MES,
+YEAR (DATAPEDIDO) ANO,
+VENDAID
+FROM VENDA WHERE YEAR(DataPedido)= 2019 ) SOURCETABLE
+
+PIVOT (count(VENDAID) for mes in ([1], [2], [3], [4] ,[5] ,[6] , [7], [8], [9], [10], [11], [12])) as PIVOTTABLE
+
+
+
+
+
+insert into @anoatual
+
+SELECT
+ANO,
+[1] JANEIRO,
+[2] FEVEREIRO,
+[3] MARÇO,
+[4] ABRIL,
+[5] MAIO,
+[6] JUNHO,
+[7] JULHO,
+[8] AGOSTO,
+[9] SETEMBRO,
+[10] OUTUBRO,
+[11] NOVEMBRO,
+[12] DEZEMBRO
+
+FROM
+
+(SELECT  MONTH (DATAPEDIDO) MES,
+YEAR (DATAPEDIDO) ANO,
+VENDAID
+FROM VENDA WHERE YEAR(DataPedido)= 2020 ) SOURCETABLE
+
+PIVOT (count(VENDAID) for mes in ([1], [2], [3], [4] ,[5] ,[6] , [7], [8], [9], [10], [11], [12])) as PIVOTTABLE
+
+select iif(ano=2019,JANEIRO,0) - iif(ano=2020,JANEIRO,0)
+from
+(select * from @anoatual
+union
+select * from @anointerior) Faturamento
+
+
+
+
